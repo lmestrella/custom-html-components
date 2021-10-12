@@ -82,4 +82,8 @@ body {
   margin-top: 3px;
   z-index: -1;
 }
+
+input[type="text"].error {
+  border: 2px solid red;
+}
 /*# sourceMappingURL=custom-html-components.css.map */

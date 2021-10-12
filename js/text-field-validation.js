@@ -23,6 +23,14 @@ const acceptAlphanumeric = (e) => {
   filterTextFieldInput(e, /[a-zA-Z0-9]/g, /[^a-zA-Z0-9]/g);
 };
 
+const addFieldErrorClass = (field) => {
+  field.classList.add("error");
+};
+
+const removeFieldErrorClass = (field) => {
+  field.classList.remove("error");
+};
+
 document.querySelectorAll(`.numeric`).forEach((field) => {
   field.addEventListener("keypress", acceptNumeric);
   field.addEventListener("input", acceptNumeric);
@@ -34,17 +42,34 @@ document.querySelectorAll(`.alphanumeric`).forEach((field) => {
 });
 
 document.querySelectorAll(`input[type="text"]`).forEach((field) => {
-  if (field.dataset.hasOwnProperty("minLength")) {
-    field.addEventListener("keypress", (e) => {
+  field.addEventListener("blur", (e) => {
+    if (e.target.value.trim().length === 0) {
+      addFieldErrorClass(e.target);
+    }
+  });
+});
+
+document.querySelectorAll(`input[type="text"]`).forEach((field) => {
+  let fieldHasMinLengthData = field.dataset.hasOwnProperty("minLength");
+  let fieldHasMaxLengthData = field.dataset.hasOwnProperty("maxLength");
+
+  if (!fieldHasMinLengthData && !fieldHasMaxLengthData) {
+    field.addEventListener("input", (e) => {
+      if (e.target.value.trim().length > 0) removeFieldErrorClass(e.target);
+    });
+  }
+
+  if (fieldHasMinLengthData) {
+    field.addEventListener("input", (e) => {
       if (e.target.value.length < field.dataset.minLength) {
-        // add error class
+        addFieldErrorClass(e.target);
       } else {
-        // remove error class
+        removeFieldErrorClass(e.target);
       }
     });
   }
 
-  if (field.dataset.hasOwnProperty("maxLength")) {
+  if (fieldHasMaxLengthData) {
     field.addEventListener("keypress", (e) => {
       if (e.target.value.length >= field.dataset.maxLength) e.preventDefault();
     });
